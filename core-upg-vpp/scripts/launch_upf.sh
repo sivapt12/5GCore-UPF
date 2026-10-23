@@ -16,6 +16,7 @@ MAIN_CORE=${6:-1}
 NUM_SESSIONS=${7:-64}
 PMD_MGMT=${8:-off}
 MODE=${9:-generate}   # default: run both
+APP_ID_FILTER_DIR=${APP_ID_FILTER_DIR:-/etc/upf/app-id.d}
 
 echo "INFO: Mode=$MODE, Pod=$POD_ID, N3=$PCI_N3, N6=$PCI_N6, N3-workers=$WORKERS_N3, N6-workers=$WORKERS_N6, main-core=$MAIN_CORE, sessions=$NUM_SESSIONS, PMD=$PMD_MGMT"
 
@@ -29,6 +30,11 @@ generate_config() {
     /5gupf/scripts/vpp/vpp_upf_config.sh generate "$POD_ID"
     sleep 2
 
+    echo "Generating App ID configuration from $APP_ID_FILTER_DIR..."
+    /5gupf/scripts/vpp/app_id_config.sh generate \
+        --filter-dir "$APP_ID_FILTER_DIR" \
+        --output "/etc/upf-app-id${POD_ID}.txt"
+
     /5gupf/scripts/vpp/generate_vpp_conf.sh "$POD_ID" "$PCI_N3" "$PCI_N6" "$WORKERS_N3" "$WORKERS_N6" "$MAIN_CORE" "$PMD_MGMT"
     sleep 2
 }
@@ -38,6 +44,11 @@ launch_test() {
     echo "Launching VPP-UPF..."
     /5gupf/scripts/vpp/launch_vpp.sh "$POD_ID"
     sleep 10
+
+    echo "Loading Hyperscan App ID filter sets..."
+    /5gupf/scripts/vpp/app_id_config.sh apply \
+        --filter-dir "$APP_ID_FILTER_DIR" \
+        --socket "/run/vpp/cli${POD_ID}.sock"
 
     echo "Starting PFCP simulation..."
     /5gupf/scripts/pfcp_sim/launch_pfcp.sh

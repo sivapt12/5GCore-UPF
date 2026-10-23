@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upf-app-id-filters
+data:
+  00-http-example.tsv: |
+    # Tab-separated records processed in filename order.
+    # app <TAB> application-name <TAB> proxy|direct
+    # l7  <TAB> application-name <TAB> rule-id <TAB> Hyperscan regex
+    #
+    # Proxy mode is required for URL/content detection. The UPF plugin compiles
+    # each l7 expression with its built-in Hyperscan integration.
+    app	http-health	proxy
+    l7	http-health	1000	^GET /healthz HTTP/1\.[01]$

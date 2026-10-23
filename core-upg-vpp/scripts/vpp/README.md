@@ -57,3 +57,45 @@ Notes: Omitting the last on argument will disable PMD monitoring by default.
  * Normalize worker cores
  * Conditional PMD monitor
  (
+
+---
+
+## 5. Hyperscan App ID filter sets
+
+The `upf_plugin.so` build links to Hyperscan and uses it for `l7` App ID
+rules. Define rules as tab-separated (`.tsv`) files. Files are processed in
+lexical order, which lets a ConfigMap mount carry many independently managed
+filter sets. Define each `app` before its `l7` rules, and use unique rule IDs
+per application.
+
+```text
+# record  application-name  mode-or-rule-id  value
+app	http-health	proxy
+l7	http-health	1000	^GET /healthz HTTP/1\.[01]$
+```
+
+`proxy` mode is required for URL/content inspection. Use `direct` only for
+applications that have no L7 rules. Application names may use letters,
+numbers, `.`, `_`, and `-`; rule IDs must be numeric and unique per
+application.
+
+Generate a reviewable VPP CLI file without a running UPF:
+
+```bash
+/5gupf/scripts/vpp/app_id_config.sh generate \
+  --filter-dir /etc/upf/app-id.d \
+  --output /etc/upf-app-id0.txt
+```
+
+Apply the same filter sets after VPP is running:
+
+```bash
+/5gupf/scripts/vpp/app_id_config.sh apply \
+  --filter-dir /etc/upf/app-id.d \
+  --socket /run/vpp/cli0.sock
+```
+
+`launch_upf.sh` runs both steps automatically. Deploy
+`manifests/upf-app-id-configmap.yaml` before the UPF deployment; replace its
+example file with production filter sets and reference the same Application
+ID in PFCP PDRs.

@@ -46,6 +46,11 @@ RUN apt-get -qq update \
        meson \
        ninja
 
+# UPG-VPP enables its App ID database with Hyperscan when these headers and
+# shared libraries are available at CMake configure time.
+RUN test -f /usr/include/hs/hs.h \
+  && ldconfig -p | grep -q 'libhs\.so'
+
 # Copy patches to the container
 COPY patches $UPF_HOME/patches
 COPY scripts $UPF_HOME/scripts

@@ -68,7 +68,13 @@ spec:
           - name: pods-run
             mountPath: /run/vpp
             subPathExpr: $(POD_UID)
+          - name: app-id-filters
+            mountPath: /etc/upf/app-id.d
+            readOnly: true
       volumes:
+        - name: app-id-filters
+          configMap:
+            name: upf-app-id-filters
         - name: pods-run
           hostPath:
             path: /var/run/pods

@@ -159,9 +159,10 @@ Ensure the node has enough 1Gi pages preallocated.
 
 ## 6. Deploying the UPF
 
-Apply the manifest:
+Apply the App ID filter ConfigMap, then the UPF manifest:
 
 ```bash
+kubectl apply -f core-upg-vpp/manifests/upf-app-id-configmap.yaml
 kubectl apply -f core-upg-vpp/manifests/upf_deployment.yaml
 ```
 
@@ -170,6 +171,13 @@ Check pod status:
 ```bash
 kubectl get pods -o wide
 ```
+
+### Configure Hyperscan App ID filters
+
+The deployment mounts `upf-app-id-filters` at `/etc/upf/app-id.d`. Its
+tab-separated filter files define applications and Hyperscan-backed L7 regex
+rules; add separate `.tsv` keys to scale filter sets independently. See
+`core-upg-vpp/scripts/vpp/README.md` for the format and runtime commands.
 
 ### Verify SR-IOV NICs:
 
