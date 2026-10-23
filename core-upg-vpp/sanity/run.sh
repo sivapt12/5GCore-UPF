@@ -52,6 +52,14 @@ fi
 sleep $waittime
 vppctl sh int
 
+# Load repository App ID filter sets into this local VPP. Kubernetes is not used.
+SANITY_DIR=$(CDPATH= cd -- "$(dirname "$0")" && pwd)
+if [ -x "$SANITY_DIR/app_id_local.sh" ]
+then
+	echo "Loading local Hyperscan App ID filter sets..."
+	"$SANITY_DIR/app_id_local.sh" --apply --socket /run/vpp/cli.sock || exit 1
+fi
+
 # network setup
 ifconfig n4 192.168.70.1/24 up
 if [ $iotype = "softio" ]

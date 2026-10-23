@@ -1,0 +1,1 @@
+l7	http-health	2000	^https?://api\.example/v1/

@@ -174,9 +174,16 @@ kubectl get pods -o wide
 
 ### Configure Hyperscan App ID filters
 
-The deployment mounts `upf-app-id-filters` at `/etc/upf/app-id.d`. Its
-tab-separated filter files define applications and Hyperscan-backed L7 regex
-rules; add separate `.tsv` keys to scale filter sets independently. See
+Local sanity uses `core-upg-vpp/config/app-id.d` and does not require the
+cluster. Check the filter sets, then apply them from the softio run:
+
+```bash
+core-upg-vpp/sanity/app_id_local.sh
+core-upg-vpp/sanity/run.sh softio
+```
+
+The deployment also mounts `upf-app-id-filters` at `/etc/upf/app-id.d`. Add
+separate `.tsv` keys to scale filter sets independently. See
 `core-upg-vpp/scripts/vpp/README.md` for the format and runtime commands.
 
 ### Verify SR-IOV NICs:

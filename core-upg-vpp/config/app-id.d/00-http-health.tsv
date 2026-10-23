@@ -1,0 +1,4 @@
+# Local Hyperscan App ID filter set. Files in this directory are applied in
+# lexical order. UPG-VPP matches these expressions against http://host/path.
+app	http-health	proxy
+l7	http-health	1000	^https?://health\.example/healthz

@@ -71,8 +71,19 @@ per application.
 ```text
 # record  application-name  mode-or-rule-id  value
 app	http-health	proxy
-l7	http-health	1000	^GET /healthz HTTP/1\.[01]$
+l7	http-health	1000	^https?://health\.example/healthz
 ```
+
+The checked-in local sets are `config/app-id.d/*.tsv`. Validate them without
+Kubernetes or a running cluster:
+
+```bash
+core-upg-vpp/sanity/app_id_local.sh
+```
+
+`sanity/run.sh` applies the same sets to `/run/vpp/cli.sock` after local VPP
+starts. The expressions match the `http://host/path` URI reconstructed by
+UPG-VPP.
 
 `proxy` mode is required for URL/content inspection. Use `direct` only for
 applications that have no L7 rules. Application names may use letters,

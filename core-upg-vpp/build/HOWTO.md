@@ -12,6 +12,9 @@ How to run VPP UPF
 * To enable power management, verify `pmd-mgmt` and `empty-polls` configured properly. 
 * For sanity, run VPP with tap (softio) interface (./run.sh) OR 
   (vpp -c ./vpp.conf; sleep 10; ./smf_pfcp.sh; ./scapy.sh)
+* Before traffic, validate App ID filters locally with ../sanity/app_id_local.sh.
+  run.sh applies those filters to the local VPP socket. This sanity path does
+  not use Kubernetes.
 * To run VPP with dpdk
   # vpp -c ./vpp_dpdk.conf (verify $PATH & $LD_LIBRARY_PATH set properly)
   # sleep 10; 
